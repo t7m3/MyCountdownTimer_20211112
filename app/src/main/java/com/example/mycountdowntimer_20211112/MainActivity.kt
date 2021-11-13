@@ -1,5 +1,7 @@
 package com.example.mycountdowntimer_20211112
 
+import android.media.AudioAttributes
+import android.media.SoundPool
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +11,8 @@ import com.example.mycountdowntimer_20211112.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private  lateinit var binding: ActivityMainBinding
+    private lateinit var soundPool: SoundPool
+    private var soundResId = 0
 
     inner class MyCountDownTimer(millisInFuture: Long , countDownInterval: Long ) : CountDownTimer(millisInFuture, countDownInterval ){
         var isRunning = false
@@ -21,7 +25,8 @@ class MainActivity : AppCompatActivity() {
 
         override fun onFinish() {
             binding.timerText.text = "0:00"
-            //binding.timerText.text = "*:**"
+            //binding.timerText.text = "＊:＊＊"
+            soundPool.play(soundResId, 1.0f, 1.0f, 0, 0, 1.0f)
         }
     }
 
@@ -54,5 +59,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        soundPool =
+                SoundPool.Builder().run {
+                    val audioAttributes = AudioAttributes.Builder().run {
+                        setUsage(AudioAttributes.USAGE_ALARM)
+                        build()
+                    }
+                    setMaxStreams(1)
+                    setAudioAttributes(audioAttributes)
+                    build()
+                }
+        soundResId = soundPool.load(this, R.raw.bellsound, 1)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        soundPool.release()
     }
 }
