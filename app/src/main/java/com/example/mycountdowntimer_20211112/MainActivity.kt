@@ -5,6 +5,7 @@ import android.media.SoundPool
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.DisplayMetrics
+import android.view.MotionEvent
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mycountdowntimer_20211112.databinding.ActivityMainBinding
 
@@ -66,8 +67,8 @@ class MainActivity : AppCompatActivity() {
         binding.imageViewEnemy.y = 100F
 
         // mageViewPlayer の初期位置の設定
-        //binding.imageViewPlayer.x = 50F
-        //binding.imageViewPlayer.y = screenHeight.toFloat() * 0.6F
+        binding.imageViewPlayer.x = 50F
+        binding.imageViewPlayer.y = screenHeight.toFloat() * 0.6F
 
         binding.playStop.setOnClickListener {
             timer.isRunning = when(timer.isRunning) {
@@ -110,5 +111,30 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
 
         soundPool.release()
+    }
+
+    //画面タッチのメソッドの定義
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+
+        binding.textView.text = "X座標：${event.x}　Y座標：${event.y}"
+
+        when (event.action) {
+
+            MotionEvent.ACTION_DOWN -> {
+                binding.textView.append("　ダウン")
+                binding.imageViewPlayer.x = event.x
+            }
+
+            MotionEvent.ACTION_UP -> binding.textView.append("　アップ")
+
+            MotionEvent.ACTION_MOVE -> {
+                binding.textView.append("　ムーブ")
+                binding.imageViewPlayer.x = event.x
+            }
+
+            MotionEvent.ACTION_CANCEL -> binding.textView.append("　キャンセル")
+        }
+
+        return true
     }
 }
